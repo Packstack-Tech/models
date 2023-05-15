@@ -5,5 +5,5 @@ setup(
     version="1.0.0",
     description="Database models for Packstack",
     packages=['models'],
-    install_requires=['jwt', 'passlib', 'sqlalchemy']
+    install_requires=['PyJWT', 'passlib', 'sqlalchemy']
 )
