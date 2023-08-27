@@ -10,16 +10,16 @@ from sqlalchemy.ext.declarative import declarative_base, declared_attr
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
-JWT_SECRET="0839942409BCFFF12C92AF8C66BF5BD06086F423C361D7C36BA8CB2CFBFCD8EF"
-JWT_ALGORITHM="HS256"
-DO_CDN="https://assets.packstack.io"
+JWT_SECRET = "0839942409BCFFF12C92AF8C66BF5BD06086F423C361D7C36BA8CB2CFBFCD8EF"
+JWT_ALGORITHM = "HS256"
+DO_CDN = "https://assets.packstack.io"
 
 
 class Base(object):
     @declared_attr
     def __tablename__(self):
         return self.__name__.lower()
-    
+
     def update(self, kwargs):
         for key, value in kwargs.items():
             setattr(self, key, value)
@@ -234,7 +234,8 @@ class Pack(Base):
     title = Column(String(500), nullable=False)
 
     # Relationships
-    items = relationship("PackItem", lazy="joined", cascade="all, delete-orphan")
+    items = relationship("PackItem", lazy="joined",
+                         cascade="all, delete-orphan")
 
 
 class Trip(Base):
@@ -397,7 +398,7 @@ class Reported(Base):
 
 class PasswordReset(Base):
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("user.id"), primary_key=True)
+    user_id = Column(Integer, ForeignKey("user.id"))
     callback_id = Column(String)
 
     def __init__(self, user_id):
@@ -407,4 +408,3 @@ class PasswordReset(Base):
     @staticmethod
     def generate_callback_id():
         return ''.join(choice('0123456789ABCDEF') for i in range(16))
-
