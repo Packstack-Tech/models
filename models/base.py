@@ -397,7 +397,7 @@ class Reported(Base):
 
 
 class PasswordReset(Base):
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey("user.id"))
     callback_id = Column(String)
 
