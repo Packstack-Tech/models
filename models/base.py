@@ -93,17 +93,16 @@ class User(Base):
         return {
             "id": self.id,
             "username": self.username,
+            "email": self.email,
             "display_name": self.display_name,
             "avatar": self.avatar,
             "bio": self.bio,
-            "unit_weight": self.unit_weight,
             "unit_distance": self.unit_distance,
             "unit_temperature": self.unit_temperature,
             "currency": self.currency,
             "banned": self.banned,
             "deactivated": self.deactivated,
             "email_verified": self.email_verified,
-            "hide_table_headers": self.hide_table_headers,
 
             "instagram_url": self.instagram_url,
             "youtube_url": self.youtube_url,
