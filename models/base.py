@@ -1,11 +1,12 @@
 import jwt
 import datetime
+import uuid
 
 from random import choice
 
 from passlib.hash import pbkdf2_sha256 as sha256
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, DATE, String, DateTime, TIMESTAMP, func, \
-    Numeric, UniqueConstraint
+    Numeric, UniqueConstraint, UUID
 from sqlalchemy.ext.declarative import declarative_base, declared_attr
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
@@ -239,6 +240,7 @@ class Pack(Base):
 
 class Trip(Base):
     id = Column(Integer, primary_key=True, index=True)
+    uuid = Column(UUID(as_uuid=True), default=uuid.uuid4)
     user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
 
     title = Column(String(500), nullable=False)
