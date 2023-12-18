@@ -98,6 +98,7 @@ class User(Base):
             "display_name": self.display_name,
             "avatar": self.avatar,
             "bio": self.bio,
+            "unit_weight": self.unit_weight,
             "unit_distance": self.unit_distance,
             "unit_temperature": self.unit_temperature,
             "currency": self.currency,
