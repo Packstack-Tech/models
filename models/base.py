@@ -11,8 +11,6 @@ from sqlalchemy.ext.declarative import declarative_base, declared_attr
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
-JWT_SECRET = "0839942409BCFFF12C92AF8C66BF5BD06086F423C361D7C36BA8CB2CFBFCD8EF"
-JWT_ALGORITHM = "HS256"
 DO_CDN = "https://assets.packstack.io"
 
 
@@ -123,14 +121,6 @@ class User(Base):
     @staticmethod
     def verify_hash(password, hash):
         return sha256.verify(password, hash)
-
-    @staticmethod
-    def generate_jwt(user):
-        return jwt.encode({"user_id": user.id}, JWT_SECRET, JWT_ALGORITHM)
-
-    @staticmethod
-    def decode_jwt(token):
-        return jwt.decode(token, key=JWT_SECRET, algorithms=[JWT_ALGORITHM], options={"verify_exp": False})
 
 
 class Item(Base):
