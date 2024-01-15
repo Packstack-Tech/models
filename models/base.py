@@ -127,6 +127,7 @@ class Item(Base):
     user_id = Column(Integer, ForeignKey("user.id"))
     brand_id = Column(Integer, ForeignKey("brand.id"))
     product_id = Column(Integer, ForeignKey("product.id"))
+    product_variant_id = Column(Integer, ForeignKey("productvariant.id"))
     category_id = Column(Integer, ForeignKey("itemcategory.id"))
     sort_order = Column(Integer, default=0)
     removed = Column(Boolean, default=False)
@@ -147,6 +148,7 @@ class Item(Base):
     # Relationships
     brand = relationship("Brand", lazy="joined")
     product = relationship("Product", lazy="joined")
+    product_variant = relationship("ProductVariant", lazy="joined")
     category = relationship("ItemCategory",
                             lazy="joined",
                             foreign_keys=[category_id],
