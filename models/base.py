@@ -1,4 +1,3 @@
-import jwt
 import datetime
 import uuid
 
@@ -186,6 +185,16 @@ class Product(Base):
     # Ensure product is unique per brand
     __table_args__ = (UniqueConstraint(
         'brand_id', 'name', name='_brand_product_uc'),)
+
+
+class ProductVariant(Base):
+    id = Column(Integer, primary_key=True, index=True)
+    product_id = Column(Integer, ForeignKey("product.id"), nullable=False)
+    name = Column(String(250), nullable=False)
+
+    # Ensure variant is unique per product
+    __table_args__ = (UniqueConstraint(
+        'name', 'product_id', name='uc_name_product_id'),)
 
 
 class PackItem(Base):
