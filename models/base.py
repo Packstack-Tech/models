@@ -75,15 +75,13 @@ class User(Base):
 
     inventory = relationship("Item",
                              lazy="joined",
-                             primaryjoin="and_(User.id == Item.user_id, "
-                                         "Item.removed == False)",
+                             primaryjoin="User.id == Item.user_id",
                              cascade="all, delete-orphan")
 
     trips = relationship("Trip",
                          backref="user",
                          lazy="joined",
-                         primaryjoin="and_(User.id == Trip.user_id, "
-                                     "Trip.removed == False)",
+                         primaryjoin="User.id == Trip.user_id",
                          order_by="desc(Trip.end_date)",
                          cascade="all, delete-orphan")
 
