@@ -30,7 +30,8 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, nullable=False, index=True)
     username = Column(String(15), unique=True, nullable=False, index=True)
-    password = Column(String, nullable=False)
+    password = Column(String, nullable=True)
+    google_id = Column(String, unique=True, index=True)
     email_verified = Column(Boolean, default=False)
 
     stripe_customer_id = Column(String)
@@ -86,6 +87,11 @@ class User(Base):
                          cascade="all, delete-orphan")
 
     def to_dict(self):
+        active_trips = sorted(
+            [t for t in self.trips if not t.removed],
+            key=lambda t: t.created_at,
+            reverse=True,
+        )
         return {
             "id": self.id,
             "username": self.username,
@@ -108,7 +114,7 @@ class User(Base):
             "snap_url": self.snap_url,
             "personal_url": self.personal_url,
 
-            "trips": self.trips
+            "trips": active_trips,
         }
 
     @staticmethod
