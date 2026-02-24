@@ -65,6 +65,7 @@ class User(Base):
 
     # Relationships
     password_resets = relationship("PasswordReset", backref="user")
+    email_verifications = relationship("EmailVerification", backref="user")
 
     avatar = relationship("Image",
                           lazy="joined",
@@ -407,6 +408,21 @@ class PasswordReset(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey("user.id"))
     callback_id = Column(String)
+
+    def __init__(self, user_id):
+        self.callback_id = self.generate_callback_id()
+        self.user_id = user_id
+
+    @staticmethod
+    def generate_callback_id():
+        return ''.join(choice('0123456789ABCDEF') for i in range(16))
+
+
+class EmailVerification(Base):
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("user.id"))
+    callback_id = Column(String)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
 
     def __init__(self, user_id):
         self.callback_id = self.generate_callback_id()
