@@ -4,7 +4,7 @@ import uuid
 from random import choice
 
 from passlib.hash import pbkdf2_sha256 as sha256
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, DATE, String, DateTime, TIMESTAMP, func, \
+from sqlalchemy import Boolean, Column, ForeignKey, Index, Integer, JSON, DATE, String, DateTime, TIMESTAMP, func, \
     Numeric, UniqueConstraint, UUID
 from sqlalchemy.ext.declarative import declarative_base, declared_attr
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -202,6 +202,42 @@ class ProductVariant(Base):
     # Ensure variant is unique per product
     __table_args__ = (UniqueConstraint(
         'name', 'product_id', name='uc_name_product_id'),)
+
+
+class CatalogProduct(Base):
+    id = Column(Integer, primary_key=True, index=True)
+
+    brand_name = Column(String(100), nullable=False, index=True)
+    product_name = Column(String(250), nullable=False)
+    variant_name = Column(String(250))
+    display_name = Column(String(500), nullable=False)
+
+    weight = Column(Numeric)
+    weight_unit = Column(String(10))
+    product_url = Column(String(1000))
+    description = Column(String(2000))
+    image_url = Column(String(1000))
+    category_suggestion = Column(String(100))
+    catalog_url_slug = Column(String(500))
+    additional_specs = Column(JSON)
+
+    brand_id = Column(Integer, ForeignKey("brand.id"))
+    product_id = Column(Integer, ForeignKey("product.id"))
+    product_variant_id = Column(Integer, ForeignKey("productvariant.id"))
+
+    status = Column(String(20), default="pending", index=True)
+    source_item_count = Column(Integer)
+    ai_confidence = Column(Numeric)
+
+    created_at = Column(
+        DateTime, default=datetime.datetime.utcnow, nullable=False)
+    updated_at = Column(TIMESTAMP, server_default=func.now())
+
+    __table_args__ = (
+        UniqueConstraint('brand_name', 'product_name', 'variant_name',
+                         name='uq_catalog_brand_product_variant'),
+        Index('ix_catalog_search', 'status', 'brand_name', 'product_name'),
+    )
 
 
 class PackItem(Base):
