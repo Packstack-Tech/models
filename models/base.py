@@ -240,6 +240,30 @@ class CatalogProduct(Base):
     )
 
 
+class Kit(Base):
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
+    name = Column(String(200), nullable=False)
+
+    created_at = Column(
+        DateTime, default=datetime.datetime.utcnow, nullable=False)
+    updated_at = Column(TIMESTAMP, server_default=func.now())
+
+    items = relationship("KitItem", lazy="joined",
+                         cascade="all, delete-orphan")
+
+
+class KitItem(Base):
+    kit_id = Column(Integer, ForeignKey("kit.id"), primary_key=True)
+    item_id = Column(Integer, ForeignKey("item.id"), primary_key=True)
+    quantity = Column(Numeric, default=1)
+
+    item = relationship("Item",
+                        lazy="joined",
+                        foreign_keys=[item_id],
+                        uselist=False)
+
+
 class PackItem(Base):
     pack_id = Column(Integer, ForeignKey("pack.id"), primary_key=True)
     item_id = Column(Integer, ForeignKey("item.id"), primary_key=True)
