@@ -141,6 +141,7 @@ class Item(Base):
     weight = Column(Numeric)
     unit = Column(String(10))
     price = Column(Numeric)
+    calories = Column(Numeric, nullable=True)
     consumable = Column(Boolean, default=False)
     product_url = Column(String(1000))
     wishlist = Column(Boolean, default=False)
