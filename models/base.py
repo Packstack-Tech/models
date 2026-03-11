@@ -3,7 +3,6 @@ import uuid
 
 from random import choice
 
-from passlib.hash import pbkdf2_sha256 as sha256
 from sqlalchemy import Boolean, Column, ForeignKey, Index, Integer, JSON, DATE, String, DateTime, TIMESTAMP, func, \
     Numeric, UniqueConstraint, UUID
 from sqlalchemy.ext.declarative import declarative_base, declared_attr
@@ -64,7 +63,6 @@ class User(Base):
     updated_at = Column(TIMESTAMP, server_default=func.now())
 
     # Relationships
-    password_resets = relationship("PasswordReset", backref="user")
     email_verifications = relationship("EmailVerification", backref="user")
 
     avatar = relationship("Image",
@@ -118,13 +116,6 @@ class User(Base):
             "trips": active_trips,
         }
 
-    @staticmethod
-    def generate_hash(password):
-        return sha256.hash(password)
-
-    @staticmethod
-    def verify_hash(password, hash):
-        return sha256.verify(password, hash)
 
 
 class Item(Base):
@@ -465,20 +456,6 @@ class Reported(Base):
         DateTime, default=datetime.datetime.utcnow, nullable=False)
 
 
-class PasswordReset(Base):
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    user_id = Column(Integer, ForeignKey("user.id"))
-    callback_id = Column(String)
-
-    def __init__(self, user_id):
-        self.callback_id = self.generate_callback_id()
-        self.user_id = user_id
-
-    @staticmethod
-    def generate_callback_id():
-        return ''.join(choice('0123456789ABCDEF') for i in range(16))
-
-
 class EmailVerification(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey("user.id"))
@@ -492,3 +469,13 @@ class EmailVerification(Base):
     @staticmethod
     def generate_callback_id():
         return ''.join(choice('0123456789ABCDEF') for i in range(16))
+
+
+class AuthOtp(Base):
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    email = Column(String, nullable=False, index=True)
+    otp_code = Column(String(6), nullable=False)
+    username = Column(String(15), nullable=True)
+    is_registration = Column(Boolean, default=False, nullable=False)
+    expires_at = Column(DateTime, nullable=False)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
