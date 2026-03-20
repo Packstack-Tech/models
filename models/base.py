@@ -31,6 +31,7 @@ class User(Base):
     username = Column(String(15), unique=True, nullable=False, index=True)
     password = Column(String, nullable=True)
     google_id = Column(String, unique=True, index=True)
+    apple_id = Column(String, unique=True, index=True)
     email_verified = Column(Boolean, default=False)
 
     stripe_customer_id = Column(String)
