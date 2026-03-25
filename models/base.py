@@ -32,6 +32,8 @@ class User(Base):
     password = Column(String, nullable=True)
     google_id = Column(String, unique=True, index=True)
     apple_id = Column(String, unique=True, index=True)
+    apple_refresh_token = Column(String, nullable=True)
+    google_refresh_token = Column(String, nullable=True)
     email_verified = Column(Boolean, default=False)
 
     stripe_customer_id = Column(String)
