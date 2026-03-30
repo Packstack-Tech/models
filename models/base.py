@@ -66,10 +66,8 @@ class User(Base):
     updated_at = Column(TIMESTAMP, server_default=func.now())
 
     # Relationships
-    email_verifications = relationship("EmailVerification", backref="user")
-
     avatar = relationship("Image",
-                          lazy="joined",
+                          lazy="select",
                           primaryjoin="and_(User.id == Image.user_id, "
                           "Image.avatar == True)",
                           order_by="desc(Image.created_at)",
@@ -77,13 +75,13 @@ class User(Base):
                           uselist=False)
 
     inventory = relationship("Item",
-                             lazy="joined",
+                             lazy="select",
                              primaryjoin="User.id == Item.user_id",
                              cascade="all, delete-orphan")
 
     trips = relationship("Trip",
                          backref="user",
-                         lazy="joined",
+                         lazy="select",
                          primaryjoin="User.id == Trip.user_id",
                          order_by="desc(Trip.end_date)",
                          cascade="all, delete-orphan")
@@ -284,10 +282,6 @@ class Post(Base):
         DateTime, default=datetime.datetime.utcnow, nullable=False)
     updated_at = Column(TIMESTAMP, server_default=func.now())
 
-    # Relationships
-    user = relationship("User", lazy="joined", uselist=False)
-    images = relationship("Image", lazy="joined")
-
 
 class Pack(Base):
     id = Column(Integer, primary_key=True, index=True)
@@ -321,12 +315,6 @@ class Trip(Base):
         DateTime, default=datetime.datetime.utcnow, nullable=False)
     updated_at = Column(TIMESTAMP, server_default=func.now())
 
-    # Relationships
-    conditions = relationship("TripCondition", lazy="joined")
-    geographies = relationship("TripGeography", lazy="joined")
-    images = relationship("Image",
-                          lazy="joined",
-                          order_by="Image.sort_order")
 
 
 class Condition(Base):
@@ -386,26 +374,17 @@ class Image(Base):
         self.s3_url = f'{DO_CDN}/{s3_key}'
         self.s3_url_thumb = f'{DO_CDN}/{s3_key_thumb}'
 
-    # Relationships
-    likes = relationship("LikeImage", backref="image")
-
 
 class TripCondition(Base):
     trip_id = Column(Integer, ForeignKey("trip.id"), primary_key=True)
     condition_id = Column(Integer, ForeignKey(
         "condition.id"), primary_key=True)
 
-    # Relationships
-    condition = relationship("Condition", lazy="joined")
-
 
 class TripGeography(Base):
     trip_id = Column(Integer, ForeignKey("trip.id"), primary_key=True)
     geography_id = Column(Integer, ForeignKey(
         "geography.id"), primary_key=True)
-
-    # Relationships
-    geography = relationship("Geography", lazy="joined")
 
 
 class Comment(Base):
@@ -419,9 +398,6 @@ class Comment(Base):
     created_at = Column(
         DateTime, default=datetime.datetime.utcnow, nullable=False)
     updated_at = Column(TIMESTAMP, server_default=func.now())
-
-    # Relationships
-    user = relationship("User", lazy="joined", uselist=False)
 
 
 class Follow(Base):
