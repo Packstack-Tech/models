@@ -86,6 +86,11 @@ class User(Base):
                          order_by="desc(Trip.end_date)",
                          cascade="all, delete-orphan")
 
+    hiker_profiles = relationship("HikerProfile",
+                                  lazy="select",
+                                  primaryjoin="User.id == HikerProfile.user_id",
+                                  cascade="all, delete-orphan")
+
     def to_dict(self):
         active_trips = sorted(
             [t for t in self.trips if not t.removed],
@@ -257,6 +262,22 @@ class KitItem(Base):
                         uselist=False)
 
 
+class HikerProfile(Base):
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
+    name = Column(String(255), nullable=False)
+    weight = Column(Numeric, nullable=True)
+    height = Column(Numeric, nullable=True)
+    year_of_birth = Column(Integer, nullable=True)
+    sex = Column(String(10), nullable=True)
+    body_type = Column(String(20), nullable=True)
+    is_default = Column(Boolean, default=False, nullable=False)
+
+    created_at = Column(
+        DateTime, default=datetime.datetime.utcnow, nullable=False)
+    updated_at = Column(TIMESTAMP, server_default=func.now())
+
+
 class PackItem(Base):
     pack_id = Column(Integer, ForeignKey("pack.id"), primary_key=True)
     item_id = Column(Integer, ForeignKey("item.id"), primary_key=True)
@@ -306,8 +327,13 @@ class Trip(Base):
 
     temp_min = Column(Integer)
     temp_max = Column(Integer)
+    temp_category = Column(String(10))
     distance = Column(Numeric)
+    daily_elevation_gain = Column(Numeric)
+    terrain = Column(String(20))
+    pace = Column(String(10))
     notes = Column(String(2500))
+    enrich_status = Column(String(20))
     published = Column(Boolean, default=False)
     removed = Column(Boolean, default=False)
 
