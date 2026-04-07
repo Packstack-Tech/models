@@ -308,6 +308,7 @@ class Pack(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
     trip_id = Column(Integer, ForeignKey("trip.id"))
+    hiker_profile_id = Column(Integer, ForeignKey("hikerprofile.id"), nullable=True)
     title = Column(String(500), nullable=False)
 
     # Relationships
