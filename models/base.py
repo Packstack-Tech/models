@@ -38,6 +38,7 @@ class User(Base):
 
     stripe_customer_id = Column(String)
     stripe_sub_id = Column(String)
+    is_subscribed = Column(Boolean, default=False, nullable=False, server_default="false")
 
     display_name = Column(String(50))
     bio = Column(String(500))
@@ -111,6 +112,7 @@ class User(Base):
             "banned": self.banned,
             "deactivated": self.deactivated,
             "email_verified": self.email_verified,
+            "is_subscribed": self.is_subscribed,
 
             "instagram_url": self.instagram_url,
             "youtube_url": self.youtube_url,
@@ -216,8 +218,10 @@ class CatalogProduct(Base):
     description = Column(String(2000))
     image_url = Column(String(1000))
     category_suggestion = Column(String(100))
+    subcategory = Column(String(100))
     catalog_url_slug = Column(String(500))
     additional_specs = Column(JSON)
+    kcal = Column(Integer)
 
     brand_id = Column(Integer, ForeignKey("brand.id"))
     product_id = Column(Integer, ForeignKey("product.id"))
