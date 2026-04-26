@@ -3,7 +3,7 @@ import uuid
 
 from random import choice
 
-from sqlalchemy import Boolean, Column, ForeignKey, Index, Integer, JSON, DATE, String, DateTime, TIMESTAMP, func, \
+from sqlalchemy import Boolean, Column, ForeignKey, Index, Integer, JSON, DATE, String, DateTime, Text, TIMESTAMP, func, \
     Numeric, UniqueConstraint, UUID
 from sqlalchemy.ext.declarative import declarative_base, declared_attr
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -144,7 +144,7 @@ class Item(Base):
     consumable = Column(Boolean, default=False)
     product_url = Column(String(1000))
     wishlist = Column(Boolean, default=False)
-    notes = Column(String(1000))
+    notes = Column(Text)
 
     created_at = Column(
         DateTime, default=datetime.datetime.utcnow, nullable=False)
