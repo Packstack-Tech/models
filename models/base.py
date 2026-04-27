@@ -338,6 +338,7 @@ class Trip(Base):
     terrain = Column(String(20))
     pace = Column(String(10))
     notes = Column(String(2500))
+    trail_system = Column(String(20))
     enrich_status = Column(String(20))
     published = Column(Boolean, default=False)
     removed = Column(Boolean, default=False)
