@@ -133,6 +133,7 @@ class Item(Base):
     product_id = Column(Integer, ForeignKey("product.id"))
     product_variant_id = Column(Integer, ForeignKey("productvariant.id"))
     category_id = Column(Integer, ForeignKey("itemcategory.id"))
+    catalog_product_id = Column(Integer, ForeignKey("catalogproduct.id"))
     sort_order = Column(Integer, default=0)
     removed = Column(Boolean, default=False)
 
@@ -146,6 +147,20 @@ class Item(Base):
     wishlist = Column(Boolean, default=False)
     notes = Column(Text)
 
+    # Lifecycle: acquisition
+    acquired_date = Column(DATE)
+    acquisition_type = Column(String(20))
+    purchase_retailer = Column(String(200))
+
+    # Lifecycle: condition & status
+    condition = Column(String(20))
+    status = Column(String(20), default="active")
+
+    # Lifecycle: retirement
+    retired_date = Column(DATE)
+    retired_reason = Column(String(50))
+    replaced_by_id = Column(Integer, ForeignKey("item.id"))
+
     created_at = Column(
         DateTime, default=datetime.datetime.utcnow, nullable=False)
     updated_at = Column(TIMESTAMP, server_default=func.now())
@@ -154,10 +169,12 @@ class Item(Base):
     brand = relationship("Brand", lazy="joined")
     product = relationship("Product", lazy="joined")
     product_variant = relationship("ProductVariant", lazy="joined")
+    catalog_product = relationship("CatalogProduct", lazy="joined")
     category = relationship("ItemCategory",
                             lazy="joined",
                             foreign_keys=[category_id],
                             uselist=False)
+    replaced_by = relationship("Item", remote_side="Item.id", uselist=False)
 
 
 class Category(Base):
@@ -239,6 +256,43 @@ class CatalogProduct(Base):
         UniqueConstraint('brand_name', 'product_name', 'variant_name',
                          name='uq_catalog_brand_product_variant'),
         Index('ix_catalog_search', 'status', 'brand_name', 'product_name'),
+    )
+
+
+class ItemLog(Base):
+    id = Column(Integer, primary_key=True, index=True)
+    item_id = Column(Integer, ForeignKey("item.id"), nullable=False)
+    user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
+    event_type = Column(String(30), nullable=False)
+    note = Column(Text)
+    event_date = Column(DATE, nullable=False)
+
+    old_condition = Column(String(20))
+    new_condition = Column(String(20))
+    old_weight = Column(Numeric)
+    new_weight = Column(Numeric)
+    cost = Column(Numeric)
+
+    created_at = Column(
+        DateTime, default=datetime.datetime.utcnow, nullable=False)
+
+    __table_args__ = (
+        Index('ix_itemlog_item_date', 'item_id', 'event_date'),
+    )
+
+
+class CategoryBenchmark(Base):
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
+    category_name = Column(String(50), nullable=False)
+
+    lifespan_years = Column(Numeric)
+    expected_nights = Column(Numeric)
+    expected_distance = Column(Numeric)
+    distance_unit = Column(String(10))
+
+    __table_args__ = (
+        UniqueConstraint('user_id', 'category_name', name='uq_user_category_benchmark'),
     )
 
 
