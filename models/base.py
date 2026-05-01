@@ -144,7 +144,6 @@ class Item(Base):
     calories = Column(Numeric, nullable=True)
     consumable = Column(Boolean, default=False)
     product_url = Column(String(1000))
-    wishlist = Column(Boolean, default=False)
     notes = Column(Text)
 
     # Lifecycle: acquisition
