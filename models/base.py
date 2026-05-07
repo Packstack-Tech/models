@@ -136,6 +136,7 @@ class Item(Base):
     catalog_product_id = Column(Integer, ForeignKey("catalogproduct.id"))
     sort_order = Column(Integer, default=0)
     removed = Column(Boolean, default=False)
+    deleted = Column(Boolean, default=False)
 
     name = Column(String(100))
     weight = Column(Numeric)
