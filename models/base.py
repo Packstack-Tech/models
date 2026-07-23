@@ -259,6 +259,33 @@ class CatalogProduct(Base):
     )
 
 
+class TrailEnrichment(Base):
+    """Cached AI trail research, keyed by normalized location string.
+
+    Trail specs (distance, elevation, terrain, pace, trail system) are
+    properties of the trail, not the trip, so they're cached indefinitely.
+    Temperatures vary by season and are cached per calendar month in
+    monthly_temps: {"7": {"temp_min": 5, "temp_max": 18, "temp_category": "moderate"}}
+    """
+    id = Column(Integer, primary_key=True, index=True)
+
+    location_key = Column(String(250), nullable=False, unique=True, index=True)
+    canonical_location = Column(String(500), nullable=False)
+
+    distance = Column(Numeric)              # km
+    daily_elevation_gain = Column(Numeric)  # m
+    terrain = Column(String(20))
+    pace = Column(String(10))
+    trail_system = Column(String(20))
+    monthly_temps = Column(JSON)
+
+    source = Column(String(20), default="ai")
+
+    created_at = Column(
+        DateTime, default=datetime.datetime.utcnow, nullable=False)
+    updated_at = Column(TIMESTAMP, server_default=func.now())
+
+
 class ItemLog(Base):
     id = Column(Integer, primary_key=True, index=True)
     item_id = Column(Integer, ForeignKey("item.id"), nullable=False)
